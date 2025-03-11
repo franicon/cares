@@ -8,9 +8,10 @@ import Image from "next/image";
 import {Input} from "@/components/ui/input";
 import 'react-phone-number-input/style.css'
 import PhoneInput from 'react-phone-number-input'
+import {E164Number} from "libphonenumber-js";
 
 interface CustomProps {
-    control: Control<unknown>
+    control: Control<any>
     fieldType: FormFiledTypes
     name: string,
     label?: string,
@@ -21,10 +22,10 @@ interface CustomProps {
     dateFormat?: string,
     showTimeSelect?: boolean,
     children?: React.ReactNode
-    renderSkeleton?: (field: unknown) => React.ReactNode
+    renderSkeleton?: (field: any) => React.ReactNode
 }
 
-const RenderField = ({field, props}: { field: unknown; props: CustomProps }) => {
+const RenderField = ({field, props}: { field: any; props: CustomProps }) => {
     const {fieldType, iconSrc, iconAlt, placeholder} = props
     switch (fieldType) {
         case FormFiledTypes.INPUT:
@@ -50,7 +51,7 @@ const RenderField = ({field, props}: { field: unknown; props: CustomProps }) => 
                         placeholder={placeholder}
                         international
                         withCountryCallingCode
-                        value={field.value}
+                        value={field.value as E164Number}
                         onChange={field.onChange}
                         className="input-phone"
                     />

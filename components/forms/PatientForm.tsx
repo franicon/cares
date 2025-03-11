@@ -29,8 +29,8 @@ const PatientForm = () => {
         resolver: zodResolver(UserFormValidation),
         defaultValues: {
             name: "",
-            email: " ",
-            phone: " "
+            email: "",
+            phone: ""
         },
     })
 
@@ -42,9 +42,9 @@ const PatientForm = () => {
 
             const user = await createUser(userData);
 
-            if (user) router.push('/patients/${user.id}/register')
-        } catch (e) {
-            console.log(e)
+            if (user) router.push(`/patients/${user.$id}/register`)
+        } catch (error) {
+            console.log(error)
         }
     }
 

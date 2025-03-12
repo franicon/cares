@@ -13,6 +13,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";
 import {Select, SelectValue} from "@radix-ui/react-select";
 import {SelectContent, SelectTrigger} from "@/components/ui/select";
+import {Textarea} from "@/components/ui/textarea";
+import {Checkbox} from "@/components/ui/checkbox";
 
 interface CustomProps {
     control: Control<any>
@@ -22,7 +24,7 @@ interface CustomProps {
     placeholder?: string,
     iconSrc?: string,
     iconAlt?: string,
-    disabled?: string,
+    disabled?: boolean,
     dateFormat?: string,
     showTimeSelect?: boolean,
     children?: React.ReactNode
@@ -47,7 +49,17 @@ const RenderField = ({field, props}: { field: any; props: CustomProps }) => {
                     />
                 </FormControl>
             </div>)
-        case
+        case FormFiledTypes.TEXTAREA:
+            return (
+                <FormControl>
+                    <Textarea
+                        placeholder={placeholder}
+                        {...field}
+                        className="shad-textArea"
+                        disabled={props.disabled}
+                    />
+                </FormControl>
+            )
         case FormFiledTypes.PHONE_INPUT:
             return (
                 <FormControl>
@@ -99,6 +111,15 @@ const RenderField = ({field, props}: { field: any; props: CustomProps }) => {
         case FormFiledTypes.SKELETON:
             return (
                 renderSkeleton ? renderSkeleton(field) : null
+            )
+        case FormFiledTypes.CHECKBOX:
+            return (
+                <FormControl>
+                    <div className="flex items-center gap-4">
+                        <Checkbox id={props.name} checked={field.value} onCheckedChange={field.onChange}/>
+                        <label htmlFor={props.name} className="checkbox-label">{props.label}</label>
+                    </div>
+                </FormControl>
             )
         default:
             break;

@@ -12,10 +12,11 @@ import {useRouter} from "next/navigation";
 import {createUser} from "@/lib/actions/patient.actions";
 import {FormFiledTypes} from "@/components/forms/PatientForm";
 import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group";
-import {Doctors, GenderOptions} from "@/constant";
+import {Doctors, GenderOptions, IdentificationTypes} from "@/constant";
 import {Label} from "@/components/ui/label";
 import {SelectItem} from "@/components/ui/select";
 import Image from "next/image";
+import {FileUploader} from "@/components/FileUploader";
 
 
 const RegisterForm = ({user}: { user: User }) => {
@@ -203,7 +204,83 @@ const RegisterForm = ({user}: { user: User }) => {
                         placeholder="Ibuprofen 200mg, etc"
                     />
                 </div>
-                <div className="flex flex-col gap-6 xl:flex-row"></div>
+                <div className="flex flex-col gap-6 xl:flex-row">
+                    <CustomFormField
+                        control={form.control}
+                        fieldType={FormFiledTypes.TEXTAREA}
+                        name="familyMedicalHistory"
+                        label="Family medical history"
+                        placeholder="Mother has headaches, etc"
+                    />
+                    <CustomFormField
+                        control={form.control}
+                        fieldType={FormFiledTypes.TEXTAREA}
+                        name="pastMedicalHistory"
+                        label="Past medical history"
+                        placeholder="Appendectomy, etc"
+                    />
+                </div>
+                <section className="space-y-6">
+                    <div className="mb-9 space-y-1">
+                        <h2 className="sub-header">Identification and Verification</h2>
+                    </div>
+                </section>
+                <CustomFormField
+                    control={form.control}
+                    fieldType={FormFiledTypes.SELECT}
+                    name="identificationType"
+                    label="Identification type"
+                    placeholder="select a identification type"
+                >{IdentificationTypes.map((type) => (
+                    <SelectItem key={type} value={type}>
+                        {type}
+                    </SelectItem>
+                ))}</CustomFormField>
+                <CustomFormField
+                    control={form.control}
+                    fieldType={FormFiledTypes.INPUT}
+                    name="identificationNumber"
+                    label="Identification number"
+                    placeholder="123456789"
+                />
+                <CustomFormField
+                    control={form.control}
+                    fieldType={FormFiledTypes.SKELETON}
+                    name="identificationDocument"
+                    label="Scanned copy of identification document"
+                    renderSkeleton={(field) => (
+                        <FormControl>
+                            <FileUploader files={field.value} onChange={field.onChange}/>
+                        </FormControl>
+                    )
+                    }
+                />
+                <section className="space-y-6">
+                    <div className="mb-9 space-y-1">
+                        <h2 className="sub-header">Consent and Privacy</h2>
+                    </div>
+                </section>
+                <CustomFormField
+                    control={form.control}
+                    fieldType={FormFiledTypes.CHECKBOX}
+                    name="treatmentConsent"
+                    label="I consent to treatment"
+                />
+
+                <CustomFormField
+                    control={form.control}
+                    fieldType={FormFiledTypes.CHECKBOX}
+                    name="disclosureConsent"
+                    label="I consent to disclosure of information"
+                />
+                <CustomFormField
+                    control={form.control}
+                    fieldType={FormFiledTypes.CHECKBOX}
+                    name="privacyConsent"
+                    label="I consent to privacy policy"
+                />
+
+
                 <SubmitButton isLoading={isLoading}>Get Started</SubmitButton>
             </form>
         </Form>

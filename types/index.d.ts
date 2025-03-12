@@ -1,5 +1,7 @@
 /* eslint-disable no-unused-vars */
 
+import {Appointment} from "@/types/appwrite.types";
+
 declare type SearchParamProps = {
     params: { [key: string]: string };
     searchParams: { [key: string]: string | string[] | undefined };

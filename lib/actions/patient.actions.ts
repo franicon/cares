@@ -13,6 +13,7 @@ import {
 import {ID, Query} from "node-appwrite";
 import {parseStringify} from "@/lib/utils";
 import {InputFile} from "node-appwrite/file";
+import {CreateUserParams} from "@/types";
 
 export const createUser = async (user: CreateUserParams) => {
     try {

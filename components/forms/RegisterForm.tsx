@@ -12,8 +12,10 @@ import {useRouter} from "next/navigation";
 import {createUser} from "@/lib/actions/patient.actions";
 import {FormFiledTypes} from "@/components/forms/PatientForm";
 import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group";
-import {GenderOption} from "@/constant";
+import {Doctors, GenderOptions} from "@/constant";
 import {Label} from "@/components/ui/label";
+import {SelectItem} from "@/components/ui/select";
+import Image from "next/image";
 
 
 const RegisterForm = ({user}: { user: User }) => {
@@ -99,7 +101,7 @@ const RegisterForm = ({user}: { user: User }) => {
                                     className="flex h-11 gap-6 xl:justify-between"
                                     onValueChange={field.onChange}
                                     defaultValue={field.value}>
-                                    {GenderOption.map((option) => (
+                                    {GenderOptions.map((option) => (
                                         <div key={option} className="radio-group">
                                             <RadioGroupItem value={option} id={option}/>
                                             <Label className="cursor-pointer" htmlFor={option}>{option}</Label>
@@ -154,8 +156,53 @@ const RegisterForm = ({user}: { user: User }) => {
                     name="primaryPhysician"
                     label="Primary Physician"
                     placeholder="select a physician"
-                />
-                <div className="flex flex-col gap-6 xl:flex-row"></div>
+                >{Doctors.map((doctor) => (
+                    <SelectItem key={doctor.name} value={doctor.name}>
+                        <div className="flex cursor-pointer items-center gap-2">
+                            <Image
+                                src={doctor.image}
+                                height={32}
+                                width={32}
+                                alt={doctor.name}
+                                className="rounded-full border border-dark-500"
+                            />
+                            <p>{doctor.name}</p>
+                        </div>
+                    </SelectItem>
+                ))}</CustomFormField>
+
+                <div className="flex flex-col gap-6 xl:flex-row">
+                    <CustomFormField
+                        control={form.control}
+                        fieldType={FormFiledTypes.INPUT}
+                        name="insuranceProvider"
+                        label="Insurance provider"
+                        placeholder="BlueCross BlueShield"
+                    />
+                    <CustomFormField
+                        control={form.control}
+                        fieldType={FormFiledTypes.INPUT}
+                        name="insurancePolicyNumber"
+                        label="Insurance policy number"
+                        placeholder="123456789ABC"
+                    />
+                </div>
+                <div className="flex flex-col gap-6 xl:flex-row">
+                    <CustomFormField
+                        control={form.control}
+                        fieldType={FormFiledTypes.TEXTAREA}
+                        name="allergies"
+                        label="Allergies (if any)"
+                        placeholder="Peanuts, pollen, etc"
+                    />
+                    <CustomFormField
+                        control={form.control}
+                        fieldType={FormFiledTypes.TEXTAREA}
+                        name="currentMedication"
+                        label="Current Medication (if any)"
+                        placeholder="Ibuprofen 200mg, etc"
+                    />
+                </div>
                 <div className="flex flex-col gap-6 xl:flex-row"></div>
                 <SubmitButton isLoading={isLoading}>Get Started</SubmitButton>
             </form>

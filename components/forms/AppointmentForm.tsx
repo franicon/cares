@@ -59,7 +59,7 @@ const AppointmentForm = ({userId, patientId, type}: AppointmentFormProps) => {
             if (type === 'create' && patientId) {
                 const appointmentData = {
                     userId,
-                    patientId,
+                    patient: patientId,
                     primaryPhysician: values.primaryPhysician,
                     reason: values.reason,
                     schedule: new Date(values.schedule),
@@ -69,7 +69,7 @@ const AppointmentForm = ({userId, patientId, type}: AppointmentFormProps) => {
                 const appointment = await createAppointment(appointmentData);
                 if (appointment) {
                     form.reset()
-                    router.push(`/patients/${userId}/new-appointment/success?appointmentId${appointment.$id}`)
+                    router.push(`/patients/${userId}/new-appointment/success?appointmentId=${appointment.$id}`)
                 }
             }
         } catch (error) {

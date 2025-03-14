@@ -1,21 +1,17 @@
 "use server";
 
-import {APPOINTMENT_COLLECTION_ID, DATABASE_ID, databases} from "@/lib/appwrite.config";
+import {APPOINTMENT_COLLECTION_ID, DATABASE_ID, databases, messaging} from "@/lib/appwrite.config";
 import {ID, Query} from "node-appwrite";
-import {parseStringify} from "@/lib/utils";
+import {formatDateTime, parseStringify} from "@/lib/utils";
 import {CreateAppointmentParams, UpdateAppointmentParams} from "@/types";
 import {Appointment} from "@/types/appwrite.types";
 import {revalidatePath} from "next/cache";
 
 export const createAppointment = async (appointment: CreateAppointmentParams) => {
     try {
-        const newAppointment = await databases.createDocument(
-            `${DATABASE_ID}`,
-            `${APPOINTMENT_COLLECTION_ID}`,
-            ID.unique(),
-            {
-                ...appointment
-            })
+        const newAppointment = await databases.createDocument(`${DATABASE_ID}`, `${APPOINTMENT_COLLECTION_ID}`, ID.unique(), {
+            ...appointment
+        })
         return parseStringify(newAppointment)
 
     } catch (error: any) {
@@ -34,9 +30,7 @@ export const getAppointments = async (appointmentId: string) => {
 
 export const getRecentAppointmentList = async () => {
     try {
-        const appointments = await databases.listDocuments(
-            DATABASE_ID, APPOINTMENT_COLLECTION_ID,
-            [Query.orderDesc('$createdAt')]);
+        const appointments = await databases.listDocuments(DATABASE_ID, APPOINTMENT_COLLECTION_ID, [Query.orderDesc('$createdAt')]);
         const initialCounts = {scheduledCount: 0, pendingCount: 0, cancelledCount: 0};
         const counts = (appointments.documents as Appointment[]).reduce((acc, appointment) => {
             if (appointment.status === 'scheduled') {
@@ -49,9 +43,7 @@ export const getRecentAppointmentList = async () => {
             return acc;
         }, initialCounts);
         const data = {
-            totalCount: appointments.total,
-            ...counts,
-            documents: appointments.documents
+            totalCount: appointments.total, ...counts, documents: appointments.documents
         }
         return parseStringify(data)
     } catch (error: any) {
@@ -65,10 +57,22 @@ export const updateAppointment = async ({appointmentId, userId, appointment, typ
         if (!updatedAppointment) {
             throw new Error('Appointment not found');
         }
-        // TODO SMS notification
+        const smsMessage = `Hi, it's Care4Me. 
+        ${type === 'schedule' ? `Your appointment has be scheduled for ${formatDateTime(appointment.schedule!)}` : `We regret to inform you that your appointment has been cancelled.for this reason: ${appointment.cancellationReason}`}
+        `
+        await sendSMSNotification(userId, smsMessage)
         revalidatePath('/admin');
         return parseStringify(updatedAppointment)
     } catch (error: any) {
         console.log(error);
+    }
+}
+
+export const sendSMSNotification = async (userId: string, content: string) => {
+    try {
+        const message = await messaging.createSms(ID.unique(), content, [], [userId])
+        return parseStringify(message)
+    } catch (error) {
+        console.log(error)
     }
 }

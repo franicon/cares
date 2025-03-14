@@ -13,7 +13,7 @@ import {
 import {ID, Query} from "node-appwrite";
 import {parseStringify} from "@/lib/utils";
 import {InputFile} from "node-appwrite/file";
-import {CreateUserParams} from "@/types";
+import {CreateUserParams, RegisterUserParams} from "@/types";
 
 export const createUser = async (user: CreateUserParams) => {
     try {
@@ -24,21 +24,22 @@ export const createUser = async (user: CreateUserParams) => {
             undefined,
             user.name,
         );
-        console.log({newUser})
-        return parseStringify({newUser});
+        console.log(newUser)
+        return parseStringify(newUser);
 
     } catch (error: any) {
         if (error && error?.code === 409) {
             const documents = await users.list([Query.equal('email', [user.email])])
             return documents?.users[0];
         }
+        console.error("An error occurred while creating a new user:", error);
     }
 }
 
 export const getUser = async (userId: string) => {
     try {
         const user = await users.get(userId);
-        return parseStringify({user});
+        return parseStringify(user);
     } catch (error: any) {
         console.log(error);
     }

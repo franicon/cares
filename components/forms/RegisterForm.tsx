@@ -17,6 +17,8 @@ import {SelectItem} from "@/components/ui/select";
 import Image from "next/image";
 import {FileUploader} from "@/components/FileUploader";
 import {registerPatient} from "@/lib/actions/patient.actions";
+import {Models} from "node-appwrite";
+import User = Models.User;
 
 
 const RegisterForm = ({user}: { user: User }) => {
@@ -43,20 +45,24 @@ const RegisterForm = ({user}: { user: User }) => {
             formData.append('blobFile', blobFile);
             formData.append('fileName', values.identificationDocument[0].name);
         }
+        console.log(user.$id)
 
         try {
             const patientData = {
                 ...values,
-                userId: user.user.$id,
+                userId: user.$id,
                 birthDate: new Date(values.birthDate),
                 identificationDocument: formData
             }
             const patient = await registerPatient(patientData);
-            if (patient) router.push(`/patients/${user.user.$id}/new-appointment`)
+            if (patient) router.push(`/patients/${user.$id}/new-appointment`)
 
         } catch (error) {
             console.log(error)
         }
+
+        setIsLoading(false);
+
     }
 
     return (
